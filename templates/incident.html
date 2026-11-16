@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SOP Incidente #{{ inc.id }} - CIROP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav class="navbar navbar-dark navbar-custom mb-4 py-3">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1 fw-bold">CIROP — Ejecución Técnica de Playbook (SOP)</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/" class="btn btn-outline-black mb-3">← Volver al Dashboard</a>
+        <div class="card border-dark shadow-sm">
+            <div class="card-header card-header-custom d-flex justify-content-between align-items-center py-3">
+                <span class="fw-bold">Incidente #{{ inc.id }}: {{ inc.titulo }}</span>
+                <span>Severidad: <strong>{{ inc.severidad }}</strong> | Estado: <strong>{{ inc.estado }}</strong></span>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <h5 class="fw-bold" style="color: #203A6E;">Procedimiento Operativo Estandarizado (SOP - {{
+                        inc.categoria }})</h5>
+                    <p class="text-muted small">Marque cada paso técnico conforme lo ejecute en la infraestructura:</p>
+
+                    {% for paso in playbook %}
+                    <div class="form-check mb-2">
+                        <input class="form-check-input border-dark" type="checkbox" name="pasos"
+                            value="{{ loop.index0 }}" id="paso{{ loop.index0 }}" {% if loop.index0|string in completados
+                            %}checked{% endif %}>
+                        <label class="form-check-label" for="paso{{ loop.index0 }}">{{ paso }}</label>
+                    </div>
+                    {% endfor %}
+
+                    <hr class="my-4">
+                    <h5 class="fw-bold" style="color: #203A6E;">Preservación de Evidencia Digital (Cadena de Custodia -
+                        ISO 27035)</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Adjuntar Log, Captura de Red (.pcap) o Muestra Forense:</label>
+                        <input type="file" name="evidencia" class="form-control border-dark">
+                    </div>
+
+                    {% if inc.evidencia_sha256 %}
+                    <div class="p-3 mb-4 custody-box rounded">
+                        <strong>Evidencia Preservada:</strong> {{ inc.evidencia_nombre }}<br>
+                        <strong>Hash SHA-256 Verificado:</strong> <code
+                            style="color: #203A6E;">{{ inc.evidencia_sha256 }}</code>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-brand">Guardar Progreso y Evidencia</button>
+                        {% if inc.estado != 'Cerrado' %}
+                        <button type="submit" name="cerrar_caso" value="1" class="btn btn-black">Finalizar y Cerrar
+                            Incidente</button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

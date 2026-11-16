@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CIROP - CSIRT Académico UNAD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav class="navbar navbar-dark navbar-custom mb-4 py-3">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1 fw-bold">CIROP — Gestión de Incidentes CSIRT UNAD</span>
+            <span class="text-white small">Nivel de Madurez TRL 5</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Tarjetas de Métricas MTTD y MTTR -->
+        <div class="row mb-4 g-3">
+            <div class="col-md-4">
+                <div class="card card-metric-black shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-uppercase small opacity-75">Total Incidentes Registrados</h6>
+                        <h2 class="fw-bold mb-0">{{ incidentes|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-metric-blue shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-uppercase small opacity-75">MTTD (Tiempo Promedio Detección)</h6>
+                        <h2 class="fw-bold mb-0">{{ mttd }} min</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-metric-white shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-uppercase small fw-bold" style="color: #203A6E;">MTTR (Tiempo
+                            Promedio Respuesta)</h6>
+                        <h2 class="fw-bold mb-0">{{ mttr }} min</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de Registro Manual -->
+        <div class="card card-section mb-4 shadow-sm">
+            <div class="card-header card-section-header py-2">Reportar Nuevo Evento / Incidente de Seguridad</div>
+            <div class="card-body">
+                <form action="/registrar" method="POST" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="titulo" class="form-control border-dark"
+                            placeholder="Descripción breve del incidente" required>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="categoria" class="form-select border-dark" required>
+                            <option value="Phishing">Phishing Institucional</option>
+                            <option value="Malware">Malware / Ransomware</option>
+                            <option value="Web">Vulnerabilidad Web (SQLi/XSS)</option>
+                            <option value="Suplantacion">Suplantación de Identidad</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="activo" class="form-control border-dark"
+                            placeholder="Activo (Ej: Campus Moodle, Correo)" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-brand w-100">Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabla de Incidentes -->
+        <div class="card card-section shadow-sm mb-5">
+            <div class="card-header card-section-header py-2">Consola de Incidentes Activos e Históricos</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-header-custom">
+                            <tr>
+                                <th class="ps-3">ID</th>
+                                <th>Incidente</th>
+                                <th>Categoría</th>
+                                <th>Activo</th>
+                                <th>Severidad</th>
+                                <th>Límite SLA</th>
+                                <th>Estado</th>
+                                <th class="text-end pe-3">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inc in incidentes %}
+                            <tr>
+                                <td class="ps-3 fw-bold">#{{ inc.id }}</td>
+                                <td>{{ inc.titulo }}</td>
+                                <td>{{ inc.categoria }}</td>
+                                <td>{{ inc.activo_afectado }}</td>
+                                <td>
+                                    <span
+                                        class="badge {% if 'P1' in inc.severidad %}badge-black{% elif 'P2' in inc.severidad %}badge-brand{% else %}badge-outline-brand{% endif %}">
+                                        {{ inc.severidad }}
+                                    </span>
+                                </td>
+                                <td>{{ inc.sla_limite.strftime('%H:%M:%S') }}</td>
+                                <td>
+                                    <span
+                                        class="badge {% if inc.estado == 'Cerrado' %}badge-black{% else %}badge-brand{% endif %}">
+                                        {{ inc.estado }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <button type="button" class="btn btn-sm btn-outline-black me-1"
+                                        data-bs-toggle="modal" data-bs-target="#editModal{{ inc.id }}">
+                                        Editar
+                                    </button>
+                                    <a href="/incidente/{{ inc.id }}" class="btn btn-sm btn-outline-brand">Ejecutar
+                                        SOP</a>
+                                </td>
+                            </tr>
+
+                            <!-- Modal de Edición por Incidente -->
+                            <div class="modal fade" id="editModal{{ inc.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content border-dark">
+                                        <div class="modal-header text-white" style="background-color: #203A6E;">
+                                            <h5 class="modal-title">Editar Incidente #{{ inc.id }}</h5>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+                                        <form action="/editar/{{ inc.id }}" method="POST">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Título / Descripción</label>
+                                                    <input type="text" name="titulo" class="form-control border-dark"
+                                                        value="{{ inc.titulo }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Categoría (Recalcula Playbook y
+                                                        SLA)</label>
+                                                    <select name="categoria" class="form-select border-dark" required>
+                                                        <option value="Phishing" {% if inc.categoria=='Phishing'
+                                                            %}selected{% endif %}>Phishing Institucional</option>
+                                                        <option value="Malware" {% if inc.categoria=='Malware'
+                                                            %}selected{% endif %}>Malware / Ransomware</option>
+                                                        <option value="Web" {% if inc.categoria=='Web' %}selected{%
+                                                            endif %}>Vulnerabilidad Web (SQLi/XSS)</option>
+                                                        <option value="Suplantacion" {% if inc.categoria=='Suplantacion'
+                                                            %}selected{% endif %}>Suplantación de Identidad</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Activo Afectado</label>
+                                                    <input type="text" name="activo" class="form-control border-dark"
+                                                        value="{{ inc.activo_afectado }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Estado del Caso</label>
+                                                    <select name="estado" class="form-select border-dark" required>
+                                                        <option value="Abierto" {% if inc.estado=='Abierto' %}selected{%
+                                                            endif %}>Abierto</option>
+                                                        <option value="En Contencion" {% if inc.estado=='En Contencion'
+                                                            %}selected{% endif %}>En Contención</option>
+                                                        <option value="Cerrado" {% if inc.estado=='Cerrado' %}selected{%
+                                                            endif %}>Cerrado</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-black"
+                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-brand">Guardar Cambios</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

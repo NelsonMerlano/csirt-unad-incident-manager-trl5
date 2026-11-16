@@ -1,0 +1,171 @@
+:root {
+    --brand-blue: #203A6E;
+    --brand-blue-hover: #162950;
+    --brand-black: #0D0D0D;
+    --brand-black-hover: #262626;
+    --brand-white: #FFFFFF;
+    --border-gray: #D9D9D9;
+    --surface-gray: #F8F9FA;
+}
+
+/* Estilos Base */
+body {
+    background-color: var(--brand-white);
+    color: var(--brand-black);
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Barra de Navegación */
+.navbar-custom {
+    background-color: var(--brand-blue);
+    border-bottom: 3px solid var(--brand-black);
+}
+
+/* Tarjetas de Métricas (MTTD / MTTR / Total) */
+.card-metric-black {
+    background-color: var(--brand-black);
+    color: var(--brand-white);
+    border: 1px solid var(--brand-black);
+}
+
+.card-metric-blue {
+    background-color: var(--brand-blue);
+    color: var(--brand-white);
+    border: 1px solid var(--brand-blue);
+}
+
+.card-metric-white {
+    background-color: var(--brand-white);
+    color: var(--brand-black);
+    border: 2px solid var(--brand-blue);
+}
+
+.metric-title-blue {
+    color: var(--brand-blue);
+}
+
+/* Secciones y Contenedores */
+.card-section {
+    background-color: var(--brand-white);
+    border: 1px solid var(--border-gray);
+    border-radius: 6px;
+}
+
+.card-section-header {
+    background-color: var(--brand-white);
+    color: var(--brand-blue);
+    border-bottom: 2px solid var(--brand-blue);
+    font-weight: 700;
+}
+
+.card-header-custom {
+    background-color: var(--brand-black);
+    color: var(--brand-white);
+}
+
+.section-title-blue {
+    color: var(--brand-blue);
+    font-weight: 700;
+}
+
+/* Tablas */
+.table-header-custom th {
+    background-color: var(--brand-black) !important;
+    color: var(--brand-white) !important;
+    border-color: var(--brand-black);
+    font-weight: 600;
+}
+
+/* Botones Institucionales */
+.btn-brand {
+    background-color: var(--brand-blue);
+    color: var(--brand-white);
+    border: 1px solid var(--brand-blue);
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-brand:hover {
+    background-color: var(--brand-blue-hover);
+    border-color: var(--brand-blue-hover);
+    color: var(--brand-white);
+}
+
+.btn-black {
+    background-color: var(--brand-black);
+    color: var(--brand-white);
+    border: 1px solid var(--brand-black);
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-black:hover {
+    background-color: var(--brand-black-hover);
+    border-color: var(--brand-black-hover);
+    color: var(--brand-white);
+}
+
+.btn-outline-brand {
+    color: var(--brand-blue);
+    border: 1px solid var(--brand-blue);
+    background-color: var(--brand-white);
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-brand:hover {
+    background-color: var(--brand-blue);
+    color: var(--brand-white);
+}
+
+.btn-outline-black {
+    color: var(--brand-black);
+    border: 1px solid var(--brand-black);
+    background-color: var(--brand-white);
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-black:hover {
+    background-color: var(--brand-black);
+    color: var(--brand-white);
+}
+
+/* Etiquetas (Badges) de Severidad y Estado */
+.badge-brand {
+    background-color: var(--brand-blue);
+    color: var(--brand-white);
+}
+
+.badge-black {
+    background-color: var(--brand-black);
+    color: var(--brand-white);
+}
+
+.badge-outline-brand {
+    background-color: var(--brand-white);
+    color: var(--brand-blue);
+    border: 1px solid var(--brand-blue);
+}
+
+/* Modales y Caja de Cadena de Custodia */
+.modal-header-brand {
+    background-color: var(--brand-blue);
+    color: var(--brand-white);
+}
+
+.custody-box {
+    background-color: var(--surface-gray);
+    border-left: 4px solid var(--brand-blue);
+    border-top: 1px solid var(--border-gray);
+    border-right: 1px solid var(--border-gray);
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.custody-hash {
+    color: var(--brand-blue);
+    font-weight: 600;
+    word-break: break-all;
+}
